@@ -57,8 +57,12 @@ class Board:
     def __str__(self) -> str:
         """String representation of the board"""
         row_str = ""
+        row_num = 0
+
         for r in self.rows:
             row_str += f"{r}\n"
+            row_num += 1
+
 
         return f"num_nums_placed: {self.num_nums_placed}\nboard (rows): \n{row_str}"
 
@@ -125,6 +129,7 @@ class Board:
         Returns:
             True if we've placed all numbers, False otherwise
         """
+        return
         pass
 
     def update(self, row: int, column: int, assignment: int) -> None:
@@ -139,7 +144,17 @@ class Board:
             column - index of the column to assign
             assignment - value to place at given row, column coordinate
         """
-        pass
+        self.rows[row][column] = assignment
+        self.num_nums_placed += 1
+
+        for i in range(self.size):
+            remove_if_exists(self.rows[row][i],assignment)
+            remove_if_exists(self.rows[i][column],assignment)
+        
+        ##rint(self.subgrid_coordinates(row, column))
+        for i, j in self.subgrid_coordinates(row,column):
+           # print(i,j)
+            remove_if_exists(self.rows[i][j], assignment)
 
 
 def DFS(state: Board) -> Board:
@@ -173,6 +188,15 @@ def BFS(state: Board) -> Board:
 
 
 if __name__ == "__main__":
+    b = Board()
+    print(b)
+    b.print_pretty()
+    b.update(0,0,4)
+    b.update(2,1,7)
+    b.update(0,5,1)
+    b.update(1,7,8)
+    b.print_pretty()
+    print(b)
     # uncomment the below lines once you've implemented the board class
    
     # # CODE BELOW HERE RUNS YOUR BFS/DFS
