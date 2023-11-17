@@ -145,8 +145,8 @@ class Board:
         Returns:
             True if we've placed all numbers, False otherwise
         """
-        return
-        pass
+        return self.num_nums_placed == self.size * self.size
+        
 
     def update(self, row: int, column: int, assignment: int) -> None:
         """Assigns the given value to the cell given by passed in row and column
@@ -183,9 +183,26 @@ def DFS(state: Board) -> Board:
             cell and attempt an assignment
 
     Returns:
-        either None in the case of invalid input or a solved board
-    """
-    pass
+        either None in the case of invalid input or a solved board"""
+
+    the_stack = Stack([state])
+    print(the_stack)
+    while not the_stack.is_empty():
+        curr = the_stack.pop()
+        if curr.goal_test():
+            return curr
+        elif not curr.failure_test():
+            row, col = curr.find_most_constrained_cell()
+            mcc = curr.rows[row][col]
+            for el in mcc:
+                cpy = copy.deepcopy(curr)
+                cpy.update(row, col, el)
+                print(row, col, mcc)
+                the_stack.push(cpy)
+                cpy.print_pretty()
+
+    return None
+    
 
 
 def BFS(state: Board) -> Board:
@@ -200,7 +217,24 @@ def BFS(state: Board) -> Board:
     Returns:
         either None in the case of invalid input or a solved board
     """
-    pass
+    the_queue = Queue([state])
+    count = 0
+    while not the_queue.is_empty():
+        curr = the_queue.pop()
+        count += 1
+        if curr.goal_test():
+            print(f"It took {count} iterations to solve")
+            return curr
+        elif not curr.failure_test():
+            row, col = curr.find_most_constrained_cell()
+            mcc = curr.rows[row][col]
+            for sel in mcc:
+                cpy = copy.deepcopy(curr) 
+                cpy.update(row, col, sel)
+                # print(row, col, sel)
+                the_queue.push(cpy)
+
+    return None
 
 
 if __name__ == "__main__":
@@ -336,11 +370,13 @@ if __name__ == "__main__":
         g.update(trip[0],trip[1],trip[2])
     g.print_pretty()
     print(g)
-    print(g.find_most_constrained_cell())
-    print(g.failure_test())
-    g.rows[6][3] = []
-    print(g.find_most_constrained_cell())
-    print(g.failure_test())
+    sol = DFS(g)
+    sol.print_pretty()
+    # print(g.find_most_constrained_cell())
+    # print(g.failure_test())
+    # g.rows[6][3] = []
+    # print(g.find_most_constrained_cell())
+    # print(g.failure_test())
     # #From the above print statement, you can see which numbers
     # #  have been assigned to the board, and then create test
     # #  cases by looking at the board and listing what values are
